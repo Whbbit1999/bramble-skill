@@ -1,6 +1,6 @@
 # Learner Model
 
-Use a lightweight evidence-based model of the learner. Do not over-profile.
+Use a lightweight evidence-based model of the learner. Do not over-profile. For ongoing learning across sessions, persist only the teaching-relevant parts defined in `long-term-state.md`.
 
 ## What to infer
 
@@ -122,3 +122,14 @@ Do not present an internal mastery table unless the learner asks for progress tr
 - lowering difficulty permanently because of one error;
 - making the learner repeat material they already demonstrated;
 - treating fluent production as proof of good judgment, or vice versa.
+
+
+## Across sessions
+
+When persistent learning state exists:
+
+- treat the knowledge graph as the latest synthesized state, not unquestionable truth;
+- let new evidence override stale assumptions;
+- keep mastery and memory stability separate;
+- use delayed retrieval and transfer as stronger evidence than an old session note;
+- never infer that a topic remained mastered merely because it was mastered in an earlier session.

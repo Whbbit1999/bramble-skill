@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "goal_id": null,
+  "current_focus": null,
+  "frontier": [],
+  "blocked_by": [],
+  "next_lesson": {
+    "objective": null,
+    "why_now": null,
+    "reactivate": [],
+    "opening_retrieval": null,
+    "core_activity": null,
+    "proof_of_learning": null,
+    "watch_for": [],
+    "unlocks": []
+  },
+  "last_updated_at": null
+}

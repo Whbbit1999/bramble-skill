@@ -7,8 +7,10 @@ description: >-
   master a subject. Route teaching by both learning-task type and domain. Supports prerequisite
   detection, intuition-first explanations, knowledge maps, progressive lessons, active recall,
   prediction checks, deliberate practice, quizzes, teach-back, error analysis, revision cycles,
-  spaced review planning, projects, and mastery tracking. Domain adapters cover programming,
-  mathematics, writing, language learning, natural sciences, and conceptual subjects such as
+  spaced review planning, projects, mastery tracking, persistent knowledge graphs, error-pattern
+  libraries, cross-session progress, adaptive review queues, and dynamic next-lesson generation.
+  Domain adapters cover programming, mathematics, writing, language learning, natural sciences,
+  and conceptual subjects such as
   history, philosophy, economics, and other structured knowledge domains.
 ---
 
@@ -155,6 +157,34 @@ Use these internal states when useful:
 For open skills such as writing, also distinguish **production** from **judgment**: a learner may be able to produce a draft without yet being able to diagnose why one version is stronger than another.
 
 See `references/learner-model.md`.
+
+## Long-term learning state
+
+When the learner wants ongoing study across sessions, maintain a **persistent, evidence-based learning state** when the runtime provides a persistent writable workspace.
+
+Default location:
+
+```text
+.learning-tutor/state/
+```
+
+The persistent system has five coordinated parts:
+
+1. **Knowledge graph** — what capabilities/concepts exist, their dependencies, and current demonstrated state.
+2. **Error library** — meaningful mistakes plus recurring underlying error patterns.
+3. **Cross-session evidence log** — what the learner actually demonstrated in each session.
+4. **Review queue** — capability-specific retrieval tasks scheduled adaptively from evidence.
+5. **Dynamic current plan** — the current frontier and the best next lesson given goals, prerequisites, errors, reviews, and transfer needs.
+
+At session start, load only the state relevant to the learner's current request. Do not dump the state into the conversation. If the learner says “继续”, “接着学”, or otherwise asks to resume without specifying a topic, use the active goal, latest relevant session, review queue, and `current-plan.json` to resume from the best next step instead of asking them to reconstruct prior progress.
+
+During teaching, update state from **observable evidence**, not from content exposure or the learner merely saying “懂了”.
+
+At a natural checkpoint or session end, reconcile the graph, errors, review queue, and current plan.
+
+If persistent storage is unavailable, do not claim cross-session persistence. Keep the model in the current conversation and provide/export a compact state snapshot when useful.
+
+Use `references/long-term-state.md` for schemas and update rules. Use `references/next-lesson-engine.md` to decide what to teach next.
 
 ## Core teaching sequence
 
@@ -480,7 +510,7 @@ For skills, retrieval may be production rather than recall:
 
 Review weak concepts or skills more often than stable ones.
 
-See `references/review-system.md`.
+See `references/review-system.md`. For persistent learners, synchronize future retrieval work with `review-queue.json` as defined in `references/long-term-state.md`.
 
 ## Error notebook behavior
 
@@ -501,7 +531,32 @@ Useful cross-domain categories:
 - careless execution;
 - retrieval failure.
 
-Recurring errors should influence future exercises.
+Recurring errors should influence future exercises. For ongoing learning, promote meaningful recurring causes into the persistent error-pattern library rather than storing isolated wrong answers forever.
+
+## Dynamic next lesson
+
+When the learner asks what to study next, or when an ongoing course needs a next session, do not follow a static syllabus blindly.
+
+Choose the next objective from:
+
+```text
+explicit current goal
+→ blocking prerequisite
+→ foundational recurring error
+→ relevant due retrieval
+→ ready knowledge-graph frontier
+→ transfer/integration need
+```
+
+A good next lesson is one observable capability, not a chapter title.
+
+Example:
+
+> Predict how ordinary-function `this` changes across method, detached, and explicit calls, and explain the rule from call site.
+
+Prefer consolidation when several adjacent capabilities remain fragile. Prefer transfer when nearby knowledge is already applicable. Replan whenever new evidence shows the current plan is too easy, too hard, redundant, or blocked.
+
+See `references/next-lesson-engine.md`.
 
 ## Domain adaptation
 
@@ -553,15 +608,17 @@ For exams, practice the actual cognitive demand: derivation, explanation, calcul
 For a sustained learning session:
 
 1. establish the immediate goal;
-2. route by task type and domain;
-3. locate the learner on the prerequisite path;
-4. choose one observable learning objective;
-5. teach a small unit;
-6. require retrieval, prediction, reasoning, or production;
-7. repair errors;
-8. increase difficulty slightly;
-9. summarize the durable rule or decision principle;
-10. identify the next logical step.
+2. when persistent state exists, load the relevant goal, graph nodes, due reviews, and active error patterns;
+3. route by task type and domain;
+4. locate the learner on the prerequisite path;
+5. choose one observable learning objective;
+6. teach a small unit;
+7. require retrieval, prediction, reasoning, or production;
+8. repair errors and record meaningful evidence;
+9. increase difficulty slightly or switch to transfer when ready;
+10. summarize the durable rule or decision principle;
+11. update review needs and generate the next candidate lesson;
+12. persist the reconciled state at a natural checkpoint when the environment supports it.
 
 Do not mechanically display these steps as headings.
 
@@ -623,6 +680,8 @@ Load these only when relevant:
 - `references/lesson-design.md` — roadmaps, lessons, dependency maps, and projects.
 - `references/assessment.md` — cross-domain exercises, feedback, and mastery checks.
 - `references/review-system.md` — retrieval practice and review planning.
+- `references/long-term-state.md` — persistent learner state, knowledge graph, error library, review queue, and session records.
+- `references/next-lesson-engine.md` — dynamically select the next lesson from goals, prerequisites, errors, reviews, and transfer needs.
 - `references/modes.md` — explanation, Socratic, practice, interview/exam, critique, and other modes.
 - `domains/programming.md` — programming/software teaching rules.
 - `domains/mathematics.md` — mathematical intuition, procedures, derivation, proof, and transfer.
@@ -632,7 +691,13 @@ Load these only when relevant:
 - `domains/conceptual-subjects.md` — history, philosophy, economics, social science, and causal/argument learning.
 - `templates/knowledge-map.md` — reusable roadmap format.
 - `templates/study-plan.md` — multi-session learning plan format.
-- `templates/session-note.md` — optional session summary format.
+- `templates/session-note.md` — optional human-readable session summary format.
+- `templates/learner.json` — persistent learner state skeleton.
+- `templates/knowledge-graph.json` — persistent knowledge graph skeleton.
+- `templates/error-library.json` — mistake and recurring-error-pattern skeleton.
+- `templates/review-queue.json` — adaptive review queue skeleton.
+- `templates/current-plan.json` — active learning frontier skeleton.
+- `templates/session-record.json` — machine-readable cross-session evidence record.
 - `examples/javascript-this.md` — programming example.
 - `examples/mathematics-derivative.md` — mathematics example.
 - `examples/writing-introduction.md` — writing example.
@@ -643,4 +708,4 @@ The tutor's job is to gradually make itself less necessary.
 
 When in doubt:
 
-**make it concrete → reduce new dependencies → make the learner do something → diagnose one broken link → adapt to the domain → test transfer.**
+**make it concrete → reduce new dependencies → make the learner do something → diagnose one broken link → persist meaningful evidence → adapt the domain and next lesson → test delayed retrieval and transfer.**

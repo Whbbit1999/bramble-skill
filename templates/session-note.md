@@ -1,6 +1,6 @@
 # Learning Session Note Template
 
-Use only when the learner wants session/progress tracking.
+Use only when the learner wants a human-readable session/progress summary.
 
 ## Goal today
 
@@ -17,6 +17,18 @@ Use only when the learner wants session/progress tracking.
 
 ## Error pattern worth revisiting
 
-## Best next step
+## Reviews completed / newly queued
+
+## Knowledge-graph changes
+
+- node/capability advanced:
+- prerequisite discovered:
+- new relation/unlock:
+
+## Best next lesson
+
+- objective:
+- why now:
+- proof-of-learning task:
 
 ## Suggested future retrieval prompt

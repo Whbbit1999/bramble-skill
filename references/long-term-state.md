@@ -219,6 +219,7 @@ Recommended shape:
   "id": "rev-js-this-001",
   "topic_id": "js-this-call-site",
   "capability": "transfer",
+  "kind": "explanation",
   "prompt": "Predict this for a detached method call and explain why",
   "due_at": "2026-09-25",
   "stage": 1,
@@ -292,6 +293,8 @@ Recommended fields:
 The session log is an audit trail. The knowledge graph is the current synthesized state.
 
 Every quiz, prediction, explanation, or production item keeps the learner's **verbatim answer** in `learner_answer`, alongside the `result` and diagnostic `note`. This is what a later review session reads to see what was actually said — not a paraphrase of it. Keep the full response even when it is long; trim only unrelated chatter and note the trim.
+
+`topic_id`, `capability`, and `kind` follow the item contract in `references/assessment.md`. `kind` must be the value the item had when it was presented, so an item and its evidence round-trip.
 
 ## 6. current-plan.json — active roadmap and frontier
 

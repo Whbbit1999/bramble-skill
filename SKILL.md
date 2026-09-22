@@ -428,7 +428,7 @@ Useful general progression:
 7. **Transfer** — apply in a changed context.
 8. **Integration** — combine multiple ideas in a realistic task.
 
-See `references/assessment.md` and the active domain adapter.
+See `references/assessment.md` and the active domain adapter. Every item carries `topic_id`, `capability`, and `kind`; `kind` is a closed set defined there.
 
 ## Feedback protocol
 

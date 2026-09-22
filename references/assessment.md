@@ -28,6 +28,43 @@ Use the capability in a changed context where the relevant method is not explici
 ### 8. Integration
 Combine multiple capabilities in an authentic task.
 
+## Item contract
+
+Every assessed item carries three fields, and the evidence record it produces repeats them unchanged.
+
+| Field | Values | Answers |
+| --- | --- | --- |
+| `topic_id` | a knowledge-graph node id | which capability is being probed |
+| `capability` | `knowledge`, `understanding`, `procedure`, `reasoning`, `production`, `judgment`, `transfer` | which mastery dimension the evidence updates |
+| `kind` | one of the eight rungs above | what the learner must actually do |
+
+`kind` is a closed set. Use exactly these eight values:
+
+```text
+recognition | prediction | completion | explanation | diagnosis | construction | transfer | integration
+```
+
+Read `kind` off the action the learner must perform, not off the subject's vocabulary. Domain forms — “recall”, “debugging”, “calculation”, “causal explanation” — are instances of a rung:
+
+```text
+recall, classification                    → recognition
+unit checking, graph reading, forecasting → prediction
+fill-in, representation change            → completion
+model explanation, causal account         → explanation
+debugging, critique, evidence comparison  → diagnosis
+calculation, derivation, drafting, proof  → construction
+unfamiliar problem, design choice         → transfer
+authentic multi-capability task           → integration
+```
+
+Explaining a given result, model, or choice is `explanation`; producing the artifact itself — the proof, calculation, derivation, or written explanation — is `construction`.
+
+`kind` and `capability` answer different questions and are independent: a `recognition` item can test `knowledge`, and a `diagnosis` item can test `reasoning`. Never use `kind` to record the mastery dimension.
+
+If one item genuinely requires more than one rung, use the highest — it governs both the response form and the strength of the evidence.
+
+Which control renders each rung is a host decision, not a skill decision. But a host that renders items depends on this set staying closed, so do not invent `kind` values.
+
 ## Domain-specific evidence
 
 Choose assessment forms that match what “knowing” means in the domain.

@@ -27,7 +27,7 @@ Track only the next few ready or nearly-ready capabilities. Do not turn the plan
 
 ## Review rhythm
 
-Use adaptive retrieval checkpoints rather than rereading-only review. Persist active retrieval work in the review queue when supported.
+Use adaptive retrieval practice rather than rereading-only review. Persist active retrieval work in the review queue when supported.
 
 ## Error-driven adaptation
 

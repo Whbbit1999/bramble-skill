@@ -32,8 +32,6 @@ If `.bramble/state/` does not exist and persistence is appropriate:
 4. create only minimal initial graph nodes needed for the learner's active goal;
 5. do not backfill invented history.
 
-When a future skill version changes a schema, preserve existing evidence and migrate fields conservatively. Unknown fields should not be silently discarded unless they are known to be obsolete.
-
 ## State layout
 
 ```text
@@ -47,7 +45,7 @@ When a future skill version changes a schema, preserve existing evidence and mig
     └── <session-id>.json
 ```
 
-The state files should stay small and machine-editable. Store only evidence that changes teaching decisions.
+Keep state machine-editable and focused on teaching decisions. Minimize unnecessary content; this is not a fixed size limit. The deduplication ID lists grow with the assessment history as described below.
 
 ## 1. learner.json — durable learning context
 
@@ -228,6 +226,8 @@ Recommended shape:
 }
 ```
 
+`last_result` is `null | "easy_success" | "effortful_success" | "partial" | "failure"`. It stores the `review_result` of the first attempt's assessment from the most recent review occurrence used for scheduling; use `null` before any such assessment exists. Same-item retries never overwrite it or update the interval again. A fresh review occurrence can replace it when its first attempt is assessed. For example, first-attempt failure followed by an assisted success leaves `last_result: "failure"`; both assessments remain in the session.
+
 Use retrieval prompts that can reveal whether the model survived:
 
 - explain without notes;
@@ -252,7 +252,7 @@ stage 4 → ~30 days
 stage 5 → ~60 days
 ```
 
-Update by evidence:
+Update by independent retrieval evidence; apply the `result` / `review_result` mapping and retry restrictions in `assessment.md`:
 
 - `easy_success` → move one stage later;
 - `effortful_success` → usually keep the stage or move one stage later when transfer was strong;
@@ -264,43 +264,83 @@ Do not make review scheduling dominate a user's focused question. If the learner
 
 ## 5. sessions/<session-id>.json — cross-session evidence log
 
-Create one concise record per meaningful learning session.
+Create one concise record per meaningful learning session using `templates/session-record.json`. The session log is the source of evidence; the graph, errors, and review queue are derived teaching state.
 
-Recommended fields:
+Session files use `schema_version: 1`. Required fields:
 
-```json
-{
-  "session_id": "20260922-js-this",
-  "started_at": "2026-09-22T10:00:00+08:00",
-  "goal": "Understand ordinary function this",
-  "topics_touched": ["js-this-call-site"],
-  "evidence": [
-    {
-      "topic_id": "js-this-call-site",
-      "capability": "understanding",
-      "result": "success",
-      "kind": "prediction",
-      "learner_answer": "user.sayName() calls sayName with user as this; but fn() just calls the function, so this is undefined",
-      "note": "Correctly predicted method vs detached call"
-    }
-  ],
-  "errors_created": ["err-20260922-001"],
-  "reviews_completed": [],
-  "next_candidates": ["js-arrow-this"]
-}
-```
+| Field | Type / meaning |
+| --- | --- |
+| `schema_version` | integer `1` |
+| `session_id` | nonempty string, stable and unique in this learner's state; filename is `<session_id>.json` |
+| `started_at` | ISO 8601 date-time string with timezone |
+| `goal` | nonempty string describing this session's learning goal |
+| `items`, `attempts`, `assessments` | arrays using the canonical [assessment contract](assessment.md#stored-records-session-schema-version-1) |
+| `checkpoint` | `null` when no exercise is active, otherwise the object below |
 
-The session log is an audit trail. The knowledge graph is the current synthesized state.
+The optional `topics_touched`, `errors_created`, `reviews_completed`, and `next_candidates` are arrays of unique nonempty strings. They are summaries, not additional evidence. Instantiate the template's null session metadata before saving a real session. `session_id` must match `[A-Za-z0-9][A-Za-z0-9._-]*`: a safe single filename component, not a path.
 
-Every quiz, prediction, explanation, or production item keeps the learner's **verbatim answer** in `learner_answer`, alongside the `result` and diagnostic `note`. This is what a later review session reads to see what was actually said — not a paraphrase of it. Keep the full response even when it is long; trim only unrelated chatter and note the trim.
+Keep IDs and immutable records together in their original session. An assessment's topic, capability, kind, and original answer are obtained by following `attempt_id → item_id`, not by making another evidence copy. `review_id` remains a historical reference even if completed queue work is removed.
 
-`topic_id`, `capability`, and `kind` follow the item contract in `references/assessment.md`. `kind` must be the value the item had when it was presented, so an item and its evidence round-trip.
+## Learning checkpoints — save and resume
+
+A checkpoint belongs inside the session file so the active question, submitted answer, evaluation, and resume position can be saved together. No separate checkpoint file or UI is required.
+
+| Checkpoint field | Required type / meaning |
+| --- | --- |
+| `item_id` | nonempty string referring to a saved item in this session |
+| `attempt_id` | `null` while awaiting a submission, otherwise the latest saved attempt ID for this item |
+| `hint_used`, `answer_seen` | booleans recording cumulative exposure for the next submission; never lower than any saved attempt for this item |
+
+Do not also store a phase flag that can disagree with the records. Derive the resume position:
+
+| Saved position | Resume action |
+| --- | --- |
+| Checkpoint has no `attempt_id` | Present the **exact saved prompt and response requirements** and wait; do not expose a solution, grading note, or previous answer. This also covers an explicitly opened retry after earlier attempts were evaluated. |
+| Checkpoint attempt has no assessment | Evaluate its saved `learner_answer` with the original requirements and assistance flags. Do not ask the learner to repeat it or create another attempt. |
+| Checkpoint attempt has an assessment | Retain and, when useful, re-show its saved feedback and result. Reconcile only unapplied assessments below, then decide retry, consolidation, or a fresh next item. Do not grade the same attempt again. |
+
+Only one exercise is active in a session. Before moving away from a submitted answer, finish its evaluation. A null checkpoint requires all stored attempts to be evaluated. While waiting on a retry, all older attempts must already be evaluated. To open the retry, retain the item and exposure flags and set checkpoint `attempt_id` to null; create the next numbered attempt only on submission. Clear the checkpoint only after the exercise has been deliberately closed, or replace it when presenting the next item. Do not clear it just because the session is ending.
+
+### Save boundaries
+
+For ongoing learning in a host with persistent file tools, execute these saves, not merely describe them:
+
+1. Before presenting an exercise, save its complete item and checkpoint. Then set `current-plan.json.resume_session_id` to its session ID (defined in the current-plan section below).
+2. Before giving a hint or revealing a solution, save the updated checkpoint exposure flags. Do not change flags on already submitted attempts.
+3. On receiving an answer, append the verbatim attempt and point the checkpoint at it; save **before** evaluating.
+4. Append its assessment, retain the checkpoint, and save **before** showing feedback or updating derived state. If that feedback provides hints/answers for a retry, save the corresponding checkpoint exposure flags in this same write.
+5. Reconcile affected derived files using the assessment IDs below. Save the next checkpoint when a retry or next question is actually chosen. Replanning must preserve `resume_session_id` while the exercise is active.
+
+Validate the candidate session before replacing the saved file. On failed validation or a failed write, keep the last valid file and the unsaved work in the conversation; report that the checkpoint was not saved. Do not claim recovery beyond the last successful save. These are tutor/host execution rules, not background autosave.
+
+### Locate a resume point
+
+Honor a specific current request first. For “continue”, load the relevant `current-plan.json.resume_session_id` and inspect that session's checkpoint **before generating a next lesson**. Resolve only a safe session filename inside `sessions/`. If the pointer is absent, stale, or references a closed session, inspect relevant session files for non-null checkpoints; repair the pointer when exactly one valid candidate matches the active goal. Do not rely on filename ordering or modification times to choose between conflicting checkpoints. If several candidates remain ambiguous, ask which to resume while preserving them. If none exists, use the latest relevant evidence and next-lesson engine.
+
+A broken reference or partial/corrupt snapshot is not a license to fabricate a missing question or answer. Preserve the records, explain the missing piece, and use an intact checkpoint or request the missing snapshot.
+
+Without persistent storage, apply the same teaching sequence within the current conversation. For cross-session continuation, export/load the session with its complete referenced items, attempts, assessments, and checkpoint plus the relevant goal/derived state and their applied-ID markers. A pointer alone is not a usable snapshot. Validate imported records, preserve IDs, and never blindly append an imported session to itself. On a conflicting existing ID with different content, preserve both sources and resolve the conflict before replacing records. JSON is an internal/export format; conversational learners need only the question, feedback, and a short save-status message when relevant.
+
+### Reconciliation without duplicate evidence
+
+`assessment_id` is the deduplication key. `knowledge-graph.json`, `error-library.json`, and `review-queue.json` each have an optional `applied_assessment_ids: string[]` (unique IDs; templates start empty). Track it separately per destination because a save may succeed for one file and fail for another.
+
+Accept linear growth of these lists with the number of assessments, with an ID stored in up to three destinations. Retain the IDs even when an assessment makes no teaching-state change; do not trim them independently of history, which could allow replay. No compaction or archival mechanism is defined at this stage.
+
+- For each assessment not yet applied to a destination, follow its links, synthesize only relevant changes, and save those changes **together with** its ID in that destination's list. Record the ID even when no change is warranted. Already listed means skip, including counters, error occurrences, mastery promotion, and review rescheduling.
+- A retry's new ID preserves repair evidence but does not make it independent evidence or another completion of the same scheduled review. Use the first attempt's assessment for that item's review interval and `last_result`, as specified in `assessment.md`; do not increment recurring-error occurrences for repeats of the same mistake on that same item.
+- Resume after an interrupted reconciliation checks each destination separately. Do not reapply already recorded IDs.
+- Keep summary arrays such as `reviews_completed` unique. Recomputing `current-plan.json` from synthesized state is allowed; it must not itself add evidence or erase an active checkpoint locator.
+
+Prefer validated temporary-file replacement for each destination when supported. IDs plus same-file markers specify idempotent processing semantics; they do **not** provide database transactions, atomic multi-file commits, concurrency control, browser refresh handling, or guaranteed delivery of feedback. If a host cannot safely save changes and markers together, inspect/reconcile an ambiguous write before continuing instead of asserting exactly-once behavior. Those runtime guarantees belong to the future host application.
 
 ## 6. current-plan.json — active roadmap and frontier
 
 Keep the current goal and the next few candidate capabilities, not a rigid semester plan.
 
-Example:
+`resume_session_id` is a required `string | null` locator for the active session in `sessions/`, not a second checkpoint. A non-null value follows the session ID filename rule above. Initialize it to `null` when no exercise is active. When regenerating the plan, carry forward the existing locator instead of resetting it from the template; ending a conversation does not close an exercise. Clear it only after the exercise is explicitly closed and the locator still points to that session. Opening another exercise sets it to that exercise's session ID.
+
+Example with an active exercise:
 
 ```json
 {
@@ -312,17 +352,19 @@ Example:
     "js-explicit-binding"
   ],
   "blocked_by": [],
+  "resume_session_id": "20260922-js-this-retry",
   "last_updated_at": "2026-09-22"
 }
 ```
 
 The frontier should change as evidence changes.
 
-`current-plan.json` may also store the immediately generated next lesson:
+`current-plan.json` may also store the immediately generated next lesson (excerpt; preserve the other plan fields):
 
 ```json
 {
   "schema_version": 1,
+  "resume_session_id": "20260922-js-this-retry",
   "next_lesson": {
     "objective": "Distinguish ordinary-function this from arrow-function lexical this",
     "why_now": "Ordinary call-site reasoning is usable; the next contrast is ready",
@@ -346,14 +388,14 @@ For an ongoing learner:
 2. inspect the active goal and only the relevant part of `knowledge-graph.json`;
 3. check due items in `review-queue.json`;
 4. inspect active error patterns relevant to the current topic;
-5. read the latest relevant session record only when needed;
-6. choose today's objective using `references/next-lesson-engine.md`.
+5. locate and restore a checkpoint using the rules above;
+6. only when no exercise is pending, choose today's objective using `references/next-lesson-engine.md`.
 
 Do not dump this state to the learner unless they ask for a progress view.
 
 ## During-session update protocol
 
-After meaningful evidence:
+After saving an assessment, reconcile it once per destination using its ID:
 
 1. classify the evidence type;
 2. update only the affected capability dimension;
@@ -363,17 +405,17 @@ After meaningful evidence:
 6. create/update review items for fragile or important learning;
 7. update the graph frontier if prerequisites or unlocks changed.
 
-Avoid rewriting every state file after every sentence. Batch updates after a learning unit or at natural checkpoints.
+Save the session at each checkpoint boundary above. Derived-state changes may be batched after a learning unit; never defer saving a pending question or submitted answer until session end.
 
 ## Session end protocol
 
 When a meaningful session ends:
 
-1. write/update the session record;
+1. save the session record, preserving any active checkpoint;
 2. synthesize the latest capability states into the knowledge graph;
 3. reconcile active error patterns;
 4. update the review queue;
-5. regenerate `current-plan.json` using the next-lesson engine;
+5. regenerate `current-plan.json` using the next-lesson engine, preserving `resume_session_id` while the exercise remains active;
 6. optionally give the learner a short human summary: what became stable, what remains fragile, and the best next step.
 
 ## State minimization and privacy

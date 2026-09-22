@@ -113,7 +113,7 @@ When the learner asks for a roadmap, include:
 - prerequisite map;
 - ordered stages;
 - proof-of-learning task per stage;
-- authentic checkpoints/projects;
+- authentic milestones/projects;
 - optional deeper branches;
 - review points when retention matters.
 

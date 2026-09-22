@@ -95,7 +95,8 @@ bramble-skill/
     ├── javascript-this.md
     ├── mathematics-derivative.md
     ├── writing-introduction.md
-    └── long-term-learning-state.md
+    ├── long-term-learning-state.md
+    └── session-checkpoint.json
 ```
 
 ## 典型提示词
@@ -136,3 +137,7 @@ English prompts: see [README.md](./README.md).
 状态由可观察的证据驱动，而不是由“讲过什么内容”驱动。知识图谱记录当前综合出的能力状态，错误库保留有诊断价值的错误模式，复习队列安排提取练习，下一课引擎则根据学习者的目标与当前前沿选择下一个学习目标。
 
 如果运行时无法跨会话保留文件，技能不得声称具备持久化能力；此时应将状态保留在当前对话中，并在有用时提供一个紧凑、可导出、可恢复的状态快照。
+
+题目、原话作答与评估共用[最小数据契约](references/assessment.md#item-contract)，同题重试保留首次结果与提示/答案暴露记录。[学习检查点](references/long-term-state.md#learning-checkpoints--save-and-resume)可定位未回答的原题、已回答未评估的作答，或已保存的反馈，再继续教学。纯对话无需展示 JSON。
+
+实际保存和恢复由具备文件工具的宿主按 skill 执行。浏览器刷新、后台自动保存、事务、并发、UI 控件和服务 API 不在本仓库实现。

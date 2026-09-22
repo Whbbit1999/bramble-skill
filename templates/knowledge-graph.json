@@ -1,4 +1,5 @@
 {
   "schema_version": 1,
-  "nodes": []
+  "nodes": [],
+  "applied_assessment_ids": []
 }

@@ -16,9 +16,9 @@ Examples:
 
 Then repair only what has decayed.
 
-## Review checkpoints
+## Review timing
 
-Use adaptive checkpoints rather than rigid promises.
+Use adaptive review timing rather than rigid promises.
 
 The concrete interval ladder is canonical in `long-term-state.md` (default `stage 0`–`stage 5`: ~1/3/7/14/30/60 days). Use only its earliest steps when no persistent review queue exists.
 
@@ -74,6 +74,6 @@ over:
 “Review chapter 4”
 ```
 
-When a queued review is completed, update its result, the relevant knowledge-graph stability, and any linked error pattern. Remove or archive completed queue work rather than leaving an ever-growing active list.
+When a queued review is completed, follow the result mapping and same-item retry rules in `assessment.md`, and the per-destination assessment-ID reconciliation rules in `long-term-state.md`. Update its result, the relevant knowledge-graph stability, and any linked error pattern only once. Remove or archive completed queue work rather than leaving an ever-growing active list.
 
 Before asking, load the learner's earlier verbatim answers for the topic (from the session log and error library) so the review can target the exact broken link and show what changed since. Re-read the original phrasing, not a paraphrase.

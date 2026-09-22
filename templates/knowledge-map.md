@@ -31,7 +31,7 @@ last evidence:
 next retrieval:
 ```
 
-## Authentic checkpoints
+## Authentic milestones
 
 Insert projects, essays, problem sets, conversations, experiments, or other products where they prove integration.
 

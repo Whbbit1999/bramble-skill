@@ -30,7 +30,7 @@ Combine multiple capabilities in an authentic task.
 
 ## Item contract
 
-Every assessed item carries three fields, and the evidence record it produces repeats them unchanged.
+Every assessed item carries the three teaching fields below. Attempts and assessments refer back to that item; do not copy fields that could drift apart. This section is the canonical contract for both conversation and future UI hosts.
 
 | Field | Values | Answers |
 | --- | --- | --- |
@@ -64,6 +64,39 @@ Explaining a given result, model, or choice is `explanation`; producing the arti
 If one item genuinely requires more than one rung, use the highest — it governs both the response form and the strength of the evidence.
 
 Which control renders each rung is a host decision, not a skill decision. But a host that renders items depends on this set staying closed, so do not invent `kind` values.
+
+### Stored records (session schema version 1)
+
+All fields below are required unless marked optional. `string` means nonempty text, except `learner_answer`, which may be empty for an explicitly submitted blank answer. IDs are opaque nonempty strings, unique within the learner's state for their record type, assigned once and reused on resume. Do not generate a new ID merely because a record is loaded again. Arrays retain creation order. Extra fields may be preserved; they must not override this contract.
+
+| Record | Fields and types |
+| --- | --- |
+| Item (`items[]`) | `item_id: string`; `topic_id: string` (graph node ID when a graph exists); `capability: enum` and `kind: enum` above; `prompt: string` (complete question, including code, choices, data, context, and assumptions needed to answer); `response_requirements: string` (what to submit and how it will be judged); optional `review_id: string` (queue entry being tested) |
+| Attempt (`attempts[]`) | `attempt_id: string`; `item_id: string`; `attempt_number: integer >= 1`; `learner_answer: string` (verbatim); `hint_used: boolean`; `answer_seen: boolean`; optional `answer_trim_note: string` (why unrelated chatter was removed) |
+| Assessment (`assessments[]`) | `assessment_id: string`; `attempt_id: string`; `result: "success" \| "partial" \| "failure"`; `note: string` (judgment reason grounded in this answer and the requirements); `feedback: string` (learner-facing feedback); `review_result: null \| "easy_success" \| "effortful_success" \| "partial" \| "failure"` |
+
+`result` describes correctness/completeness against the requirements, not independence or mastery. `partial` means some required reasoning or work is valid but incomplete; `failure` means the target capability was not demonstrated. Explain subjective judgments as such. Keep `note` and `feedback` separate: the first explains the evaluation; the second tells the learner what worked and what to repair.
+
+### Links, retries, and assistance
+
+- Each attempt references an item in the same session; each assessment references exactly one saved attempt there. An attempt has at most one assessment. An unanswered item has no attempt; an unevaluated answer has an attempt but no assessment. Do not fabricate empty answers for unanswered items.
+- Number attempts for each item consecutively from 1. A new answer or revision is a new attempt; never overwrite the earlier answer or its assessment. Reopening a pending exercise continues its original session record even on a later day.
+- Preserve the item's wording, requirements, topic, capability, and kind. A changed question is a new item with its own ID. The same item retried after feedback is not an independent test.
+- Assistance flags describe exposure **before that submission**. They are cumulative for retries of the same item: once a hint or solution has been given, later attempts cannot reset the corresponding flag. Persist exposure immediately in the checkpoint even if no answer has arrived yet. Feedback that reveals the answer sets `answer_seen` for the next submission, without changing the previous attempt's flags.
+- Only a first attempt with both flags false can be candidate independent evidence. Success on a retry or after assistance can show repair, but cannot erase the first failure, increase stability as independent retrieval, or count as a second independent mastery demonstration. Use a fresh variation without assistance to test independence.
+- Preserve the full learner response, including code or relevant artifact text, rather than only a mutable file link or a paraphrase. If unrelated chatter is removed, explain the removal in that attempt's optional `answer_trim_note`. Do not expose solutions, private grading notes, or previous assessed answers when presenting an unanswered question.
+
+### Assessment and review results
+
+Keep the existing correctness vocabulary in `result`. For an item without `review_id`, `review_result` is `null`; for a review item it is required to be non-null:
+
+| `result` | `review_result` |
+| --- | --- |
+| `failure` | `failure` |
+| `partial` | `partial` |
+| `success` | `easy_success` for independent fluent retrieval; otherwise `effortful_success` |
+
+An assisted success or same-item retry must use `effortful_success` and must not advance the review interval. Independent effortful success may advance it only under the rules in `long-term-state.md`. A scheduled review occurrence uses the first attempt's assessment to update the interval and the queue's `last_result` once; retries are repair evidence, not additional review completions. Keep the original failed/partial retrieval visible and schedule a fresh test after repair.
 
 ## Domain-specific evidence
 

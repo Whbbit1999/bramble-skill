@@ -4,8 +4,11 @@
   "started_at": null,
   "goal": null,
   "topics_touched": [],
-  "evidence": [],
+  "assessments": [],
   "errors_created": [],
   "reviews_completed": [],
-  "next_candidates": []
+  "next_candidates": [],
+  "items": [],
+  "attempts": [],
+  "checkpoint": null
 }

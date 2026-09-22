@@ -95,7 +95,8 @@ bramble-skill/
     ├── javascript-this.md
     ├── mathematics-derivative.md
     ├── writing-introduction.md
-    └── long-term-learning-state.md
+    ├── long-term-learning-state.md
+    └── session-checkpoint.json
 ```
 
 ## Typical prompts
@@ -138,3 +139,7 @@ For an ongoing learner, the skill can maintain a local state directory when the 
 The state is driven by observable evidence rather than content exposure. The knowledge graph records current synthesized capability, the error library keeps diagnostically useful mistake patterns, the review queue schedules retrieval, and the next-lesson engine chooses the next objective from the learner's goal and current frontier.
 
 If the runtime does not preserve files across sessions, the skill must not claim persistence; it should instead keep state in the current conversation and provide a compact exportable snapshot when useful.
+
+Questions, verbatim attempts, and assessments now share a [minimal contract](references/assessment.md#item-contract). Same-question retries retain the first result and assistance history. [Checkpoints](references/long-term-state.md#learning-checkpoints--save-and-resume) restore an unanswered question, an answer awaiting evaluation, or saved feedback before continuing. JSON stays internal in ordinary conversation.
+
+File saves/restores are performed by a capable host following the skill. Browser refresh, autosave, transactions, concurrency, UI controls, and service APIs are outside this repository.

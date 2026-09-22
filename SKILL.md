@@ -177,11 +177,11 @@ The persistent system has five coordinated parts:
 4. **Review queue** — capability-specific retrieval tasks scheduled adaptively from evidence.
 5. **Dynamic current plan** — the current frontier and the best next lesson given goals, prerequisites, errors, reviews, and transfer needs.
 
-At session start, load only the state relevant to the learner's current request. Do not dump the state into the conversation. If the learner says “继续”, “接着学”, or otherwise asks to resume without specifying a topic, use the active goal, latest relevant session, review queue, and `current-plan.json` to resume from the best next step instead of asking them to reconstruct prior progress.
+At session start, load only the state relevant to the learner's current request. Do not dump the state into the conversation. If the learner says “继续”, “接着学”, or otherwise asks to resume without specifying a topic, first restore the relevant session checkpoint located through `current-plan.json`: show the saved unanswered question, evaluate a saved unevaluated answer, or retain saved feedback and decide what follows. Only generate a next lesson when no exercise is pending. See the exact save/resume rules in `references/long-term-state.md`.
 
 During teaching, update state from **observable evidence**, not from content exposure or the learner merely saying “懂了”.
 
-At a natural checkpoint or session end, reconcile the graph, errors, review queue, and current plan.
+Save the session when presenting a question, giving assistance, receiving an answer, and recording its assessment. Reconcile the graph, errors, and review queue once per assessment ID after a learning unit; preserve the active checkpoint when updating the current plan. Do not create a learning profile for a one-off explanation.
 
 If persistent storage is unavailable, do not claim cross-session persistence. Keep the model in the current conversation and provide/export a compact state snapshot when useful.
 
@@ -428,7 +428,7 @@ Useful general progression:
 7. **Transfer** — apply in a changed context.
 8. **Integration** — combine multiple ideas in a realistic task.
 
-See `references/assessment.md` and the active domain adapter. Every item carries `topic_id`, `capability`, and `kind`; `kind` is a closed set defined there.
+See `references/assessment.md` and the active domain adapter. Use its item–attempt–assessment contract: a stable item with a complete prompt and response requirements; separate verbatim attempts with assistance flags; and linked assessments with reasons and learner-facing feedback. `topic_id`, `capability`, and the closed `kind` set remain the teaching labels. Retrying never overwrites a first failure or counts as independent mastery. Keep JSON internal in ordinary conversation.
 
 ## Feedback protocol
 
@@ -609,17 +609,17 @@ For exams, practice the actual cognitive demand: derivation, explanation, calcul
 For a sustained learning session:
 
 1. establish the immediate goal;
-2. when persistent state exists, load the relevant goal, graph nodes, due reviews, and active error patterns;
+2. when state exists, restore an active checkpoint before choosing a new objective; otherwise load the relevant goal, graph nodes, due reviews, and active error patterns;
 3. route by task type and domain;
 4. locate the learner on the prerequisite path;
 5. choose one observable learning objective;
 6. teach a small unit;
 7. require retrieval, prediction, reasoning, or production;
-8. repair errors and record meaningful evidence, keeping the learner's verbatim answer for every quiz, prediction, or production item;
+8. save the verbatim attempt before evaluating, save the linked assessment before feedback, then repair errors;
 9. increase difficulty slightly or switch to transfer when ready;
 10. summarize the durable rule or decision principle;
 11. update review needs and generate the next candidate lesson;
-12. persist the reconciled state at a natural checkpoint when the environment supports it.
+12. persist the reconciled state after a learning unit when the environment supports it.
 
 Do not mechanically display these steps as headings.
 
@@ -698,7 +698,9 @@ Load these only when relevant:
 - `templates/error-library.json` — mistake and recurring-error-pattern skeleton.
 - `templates/review-queue.json` — adaptive review queue skeleton.
 - `templates/current-plan.json` — active learning frontier skeleton.
-- `templates/session-record.json` — machine-readable cross-session evidence record.
+- `templates/session-record.json` — version 1 items, attempts, assessments, and checkpoint skeleton.
+- `examples/long-term-learning-state.md` — learning-state and checkpoint/retry walkthrough.
+- `examples/session-checkpoint.json` — populated version 1 retry and checkpoint example.
 - `examples/javascript-this.md` — programming example.
 - `examples/mathematics-derivative.md` — mathematics example.
 - `examples/writing-introduction.md` — writing example.

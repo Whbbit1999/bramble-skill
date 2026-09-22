@@ -4,6 +4,8 @@ Use this engine to decide what the learner should study next when they want an o
 
 The result should be dynamic, evidence-based, and small enough to execute in one session.
 
+Before running this engine for “continue”, restore any pending exercise using `long-term-state.md`. A saved unanswered question or unevaluated answer takes precedence over generating another lesson; an evaluated checkpoint retains its feedback while this engine helps decide the next step.
+
 ## Inputs
 
 Use only what is available:

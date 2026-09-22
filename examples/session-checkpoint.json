@@ -12,7 +12,18 @@
       "kind": "prediction",
       "prompt": "In strict-mode JavaScript, predict the return value of each call without running it:\n\"use strict\";\nconst user = { who() { return this; } };\nconst fn = user.who;\nuser.who();\nfn();",
       "response_requirements": "Give both return values and explain how each call form determines this.",
-      "review_id": "rev-js-this-001"
+      "review_id": "rev-js-this-001",
+      "review_state_before": {
+        "id": "rev-js-this-001",
+        "topic_id": "js-this-call-site",
+        "capability": "understanding",
+        "kind": "prediction",
+        "prompt": "Predict a detached method call and explain the receiver.",
+        "due_at": "2026-09-22",
+        "stage": 1,
+        "last_result": "partial",
+        "source": "learner-request"
+      }
     }
   ],
   "attempts": [
@@ -40,7 +51,11 @@
       "result": "failure",
       "note": "The method result is right, but the answer attributes this to definition location and does not demonstrate call-site reasoning.",
       "feedback": "Your method-call prediction is right. Compare the two call expressions: which one supplies a receiver before the dot? Use that difference to reconsider the plain strict-mode call.",
-      "review_result": "failure"
+      "review_result": "failure",
+      "assessed_at": "2026-09-22T10:01:00+08:00",
+      "supersedes_assessment_id": null,
+      "objection": null,
+      "review_outcome": null
     },
     {
       "assessment_id": "20260922-this-e2",
@@ -48,7 +63,11 @@
       "result": "success",
       "note": "Both values and the call-site explanation are correct after a hint. This is repair, not independent retrieval.",
       "feedback": "Correct: the method call uses user as this; the plain strict-mode call returns undefined. Next, try a fresh variation without a hint.",
-      "review_result": "effortful_success"
+      "review_result": "effortful_success",
+      "assessed_at": "2026-09-22T10:02:00+08:00",
+      "supersedes_assessment_id": null,
+      "objection": null,
+      "review_outcome": null
     }
   ],
   "checkpoint": {

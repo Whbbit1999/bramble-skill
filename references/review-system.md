@@ -74,6 +74,6 @@ over:
 “Review chapter 4”
 ```
 
-When a queued review is completed, follow the result mapping and same-item retry rules in `assessment.md`, and the per-destination assessment-ID reconciliation rules in `long-term-state.md`. Update its result, the relevant knowledge-graph stability, and any linked error pattern only once. Remove or archive completed queue work rather than leaving an ever-growing active list.
+When a queued review is completed, follow the result mapping and same-item retry rules in `assessment.md`, and the per-destination assessment-ID reconciliation rules in `long-term-state.md`. Resolve linked assessment reviews before scheduling: withdrawals are not failures, and verdict corrections are not new retrievals. Reconstruct affected intervals using `long-term-state.md#correcting-derived-learning-state`. Update its result, the relevant knowledge-graph stability, and any linked error pattern only once. Remove or archive completed queue work rather than leaving an ever-growing active list.
 
 Before asking, load the learner's earlier verbatim answers for the topic (from the session log and error library) so the review can target the exact broken link and show what changed since. Re-read the original phrasing, not a paraphrase.

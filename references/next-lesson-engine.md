@@ -6,6 +6,8 @@ The result should be dynamic, evidence-based, and small enough to execute in one
 
 Before running this engine for “continue”, restore any pending exercise using `long-term-state.md`. A saved unanswered question or unevaluated answer takes precedence over generating another lesson; an evaluated checkpoint retains its feedback while this engine helps decide the next step.
 
+After an assessment correction or withdrawal, reconcile affected derived state before using this engine. Use only effective judgments; remove repair work supported solely by the mistaken assessment, retain independent evidence, and preserve the active checkpoint locator. See `long-term-state.md#correcting-derived-learning-state`.
+
 ## Inputs
 
 Use only what is available:

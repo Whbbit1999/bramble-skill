@@ -9,7 +9,8 @@ description: >-
   detection, intuition-first explanations, knowledge maps, progressive lessons, active recall,
   prediction checks, deliberate practice, quizzes, teach-back, error analysis, revision cycles,
   spaced review planning, projects, mastery tracking, persistent knowledge graphs, error-pattern
-  libraries, cross-session progress, adaptive review queues, and dynamic next-lesson generation.
+  libraries, cross-session progress, assessment objections and corrections, adaptive review queues,
+  and dynamic next-lesson generation.
   Domain adapters cover programming, mathematics, writing, language learning, natural sciences,
   and conceptual subjects such as
   history, philosophy, economics, and other structured knowledge domains.
@@ -52,6 +53,7 @@ Common intents:
 - **Interview / exam** — convert understanding into concise, retrievable performance.
 - **Deep dive** — reveal mechanisms, boundaries, tradeoffs, evidence, or implementation details.
 - **Critique / revise** — improve a learner-produced artifact while preserving the learner's agency.
+- **Dispute an assessment** — recheck a specific judgment and correct its learning-state consequences when warranted.
 
 See `references/modes.md` for detailed mode behavior.
 
@@ -181,7 +183,7 @@ At session start, load only the state relevant to the learner's current request.
 
 During teaching, update state from **observable evidence**, not from content exposure or the learner merely saying “懂了”.
 
-Save the session when presenting a question, giving assistance, receiving an answer, and recording its assessment. Reconcile the graph, errors, and review queue once per assessment ID after a learning unit; preserve the active checkpoint when updating the current plan. Do not create a learning profile for a one-off explanation.
+Save the session when presenting a question, giving assistance, receiving an answer, and recording its assessment. Reconcile the graph, errors, and review queue from effective assessment chains with per-destination ID markers after a learning unit; preserve the active checkpoint when updating the current plan. Do not create a learning profile for a one-off explanation.
 
 If persistent storage is unavailable, do not claim cross-session persistence. Keep the model in the current conversation and provide/export a compact state snapshot when useful.
 
@@ -451,6 +453,12 @@ For open-ended work such as writing, distinguish:
 
 Do not present subjective taste as an objective rule.
 
+## Assessment objections
+
+Treat “我的答案也成立”, “你误解了我的意思”, or “题目条件不完整” as a request to review the identified assessment. Read [the review protocol](references/assessment.md#assessment-objections) before deciding: locate the original item, verbatim attempt, exposure flags, and judgment; distinguish clarification from a new answer after feedback. Neither concede automatically nor defend the old verdict by default.
+
+Keep the original records and append the reasoned review to the same assessment chain. Its latest judgment is effective; an invalid item contributes no failure or mastery evidence. For persistent learners, [reconcile only affected learning state](references/long-term-state.md#correcting-derived-learning-state), preserving other evidence and the active checkpoint. Explain the outcome and what was actually saved. This works in ordinary conversation without a UI; without writable storage, limit the claim to this conversation or an exported snapshot.
+
 ## Teach-back
 
 Use teach-back at the end of important conceptual units.
@@ -701,6 +709,7 @@ Load these only when relevant:
 - `templates/session-record.json` — version 1 items, attempts, assessments, and checkpoint skeleton.
 - `examples/long-term-learning-state.md` — learning-state and checkpoint/retry walkthrough.
 - `examples/session-checkpoint.json` — populated version 1 retry and checkpoint example.
+- `examples/assessment-objections.md` — correction, upheld judgment, invalid item, and retry scenarios.
 - `examples/javascript-this.md` — programming example.
 - `examples/mathematics-derivative.md` — mathematics example.
 - `examples/writing-introduction.md` — writing example.

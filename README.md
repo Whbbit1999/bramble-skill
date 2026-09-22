@@ -96,7 +96,8 @@ bramble-skill/
     ├── mathematics-derivative.md
     ├── writing-introduction.md
     ├── long-term-learning-state.md
-    └── session-checkpoint.json
+    ├── session-checkpoint.json
+    └── assessment-objections.md
 ```
 
 ## Typical prompts
@@ -143,3 +144,5 @@ If the runtime does not preserve files across sessions, the skill must not claim
 Questions, verbatim attempts, and assessments now share a [minimal contract](references/assessment.md#item-contract). Same-question retries retain the first result and assistance history. [Checkpoints](references/long-term-state.md#learning-checkpoints--save-and-resume) restore an unanswered question, an answer awaiting evaluation, or saved feedback before continuing. JSON stays internal in ordinary conversation.
 
 File saves/restores are performed by a capable host following the skill. Browser refresh, autosave, transactions, concurrency, UI controls, and service APIs are outside this repository.
+
+Learners can [dispute an assessment](references/assessment.md#assessment-objections) in conversation. Bramble rechecks the original evidence, preserves judgment history, and corrects only affected learning records when warranted. See [fictional examples](examples/assessment-objections.md).

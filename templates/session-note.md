@@ -20,6 +20,7 @@ Use only when the learner wants a human-readable session/progress summary.
 Keep the learner's own words for each quiz, prediction, explanation, or production item, paired with the question.
 
 - Q: … / Attempt 1: “…” / Assistance: … / Result and feedback: …
+- Reviewed judgment: original result → current result (or withdrawn), objection, reason, and state-save status.
 - Keep retries separate. This note is a human summary; the session JSON holds the checkpoint and linked records.
 
 ## Error pattern worth revisiting

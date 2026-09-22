@@ -147,7 +147,7 @@ Separate **instances** from **patterns**.
 
 ### Error instance
 
-An instance captures one diagnostic event. Keep the learner's own words first, then the diagnosis:
+An instance captures one diagnostic event. Every instance has `session_id` and `assessment_id` pointing to its current effective source judgment; remove an invalidated instance from the active library (its history remains in the session). Keep the learner's own words first, then the diagnosis:
 
 ```json
 {
@@ -156,11 +156,12 @@ An instance captures one diagnostic event. Keep the learner's own words first, t
   "category": "incorrect_conceptual_model",
   "summary": "Assumed this is determined by where the function was defined",
   "task_summary": "Predict the receiver of a detached method call",
-  "learner_answer": "It's still obj, because the function was defined inside obj",
+  "learner_answer": "Both return user because who was defined inside user.",
   "learner_response_summary": "Expected the original object to remain this",
   "corrective_principle": "For ordinary functions, infer this from the call form",
   "retest_prompt": "Predict a different detached method example and explain the call site",
-  "session_id": "20260922-js-this",
+  "session_id": "20260922-js-this-retry",
+  "assessment_id": "20260922-this-e1",
   "created_at": "2026-09-22"
 }
 ```
@@ -226,7 +227,7 @@ Recommended shape:
 }
 ```
 
-`last_result` is `null | "easy_success" | "effortful_success" | "partial" | "failure"`. It stores the `review_result` of the first attempt's assessment from the most recent review occurrence used for scheduling; use `null` before any such assessment exists. Same-item retries never overwrite it or update the interval again. A fresh review occurrence can replace it when its first attempt is assessed. For example, first-attempt failure followed by an assisted success leaves `last_result: "failure"`; both assessments remain in the session.
+`last_result` is `null | "easy_success" | "effortful_success" | "partial" | "failure"`. It stores the `review_result` of the first attempt's effective assessment from the most recent review occurrence used for scheduling; use `null` before any such assessment exists. A withdrawn occurrence contributes no scheduling result. Same-item retries never overwrite it or update the interval again. A fresh review occurrence can replace it when its first attempt is assessed. For example, first-attempt failure followed by an assisted success leaves `last_result: "failure"`; both assessments remain in the session.
 
 Use retrieval prompts that can reveal whether the model survived:
 
@@ -297,7 +298,7 @@ Do not also store a phase flag that can disagree with the records. Derive the re
 | --- | --- |
 | Checkpoint has no `attempt_id` | Present the **exact saved prompt and response requirements** and wait; do not expose a solution, grading note, or previous answer. This also covers an explicitly opened retry after earlier attempts were evaluated. |
 | Checkpoint attempt has no assessment | Evaluate its saved `learner_answer` with the original requirements and assistance flags. Do not ask the learner to repeat it or create another attempt. |
-| Checkpoint attempt has an assessment | Retain and, when useful, re-show its saved feedback and result. Reconcile only unapplied assessments below, then decide retry, consolidation, or a fresh next item. Do not grade the same attempt again. |
+| Checkpoint attempt has an assessment | Resolve the assessment chain and retain/re-show its latest feedback and result, explicitly noting a correction or withdrawal; never revive superseded feedback as current. Reconcile only unapplied assessments below, then decide retry, consolidation, or a fresh next item. Do not grade the same attempt again on resume. An explicit objection follows `assessment.md` and appends a linked review. A void assessment counts as evaluated, but supplies no learning evidence. |
 
 Only one exercise is active in a session. Before moving away from a submitted answer, finish its evaluation. A null checkpoint requires all stored attempts to be evaluated. While waiting on a retry, all older attempts must already be evaluated. To open the retry, retain the item and exposure flags and set checkpoint `attempt_id` to null; create the next numbered attempt only on submission. Clear the checkpoint only after the exercise has been deliberately closed, or replace it when presenting the next item. Do not clear it just because the session is ending.
 
@@ -311,7 +312,7 @@ For ongoing learning in a host with persistent file tools, execute these saves, 
 4. Append its assessment, retain the checkpoint, and save **before** showing feedback or updating derived state. If that feedback provides hints/answers for a retry, save the corresponding checkpoint exposure flags in this same write.
 5. Reconcile affected derived files using the assessment IDs below. Save the next checkpoint when a retry or next question is actually chosen. Replanning must preserve `resume_session_id` while the exercise is active.
 
-Validate the candidate session before replacing the saved file. On failed validation or a failed write, keep the last valid file and the unsaved work in the conversation; report that the checkpoint was not saved. Do not claim recovery beyond the last successful save. These are tutor/host execution rules, not background autosave.
+Validate the candidate session against the assessment contract before replacing the saved file. Compare it with the saved session: preserve existing items, attempts, and assessments; ensure new submissions retain prior exposure and checkpoints do not lose exposure flags. On failed validation or a failed write, keep the last valid file and the unsaved work in the conversation; report that the checkpoint was not saved. Do not claim recovery beyond the last successful save. These are tutor/host execution rules, not background autosave.
 
 ### Locate a resume point
 
@@ -327,12 +328,30 @@ Without persistent storage, apply the same teaching sequence within the current 
 
 Accept linear growth of these lists with the number of assessments, with an ID stored in up to three destinations. Retain the IDs even when an assessment makes no teaching-state change; do not trim them independently of history, which could allow replay. No compaction or archival mechanism is defined at this stage.
 
-- For each assessment not yet applied to a destination, follow its links, synthesize only relevant changes, and save those changes **together with** its ID in that destination's list. Record the ID even when no change is warranted. Already listed means skip, including counters, error occurrences, mastery promotion, and review rescheduling.
-- A retry's new ID preserves repair evidence but does not make it independent evidence or another completion of the same scheduled review. Use the first attempt's assessment for that item's review interval and `last_result`, as specified in `assessment.md`; do not increment recurring-error occurrences for repeats of the same mistake on that same item.
+- Resolve each attempt's whole assessment chain first. If its effective tip is not applied to a destination, follow its links, synthesize only relevant changes from that effective judgment, and save those changes **together with all IDs in the chain** in that destination's list. Superseded assessments are marked consumed, never replayed as additional evidence. Record the IDs even when no change is warranted. Already listed means skip, including counters, error occurrences, mastery promotion, and review rescheduling. A linked review requires the correction procedure below, even when its ancestor was already applied.
+- A retry's new ID preserves repair evidence but does not make it independent evidence or another completion of the same scheduled review. Use the first attempt's effective assessment for that item's review interval and `last_result`, as specified in `assessment.md`; do not increment recurring-error occurrences for repeats of the same mistake on that same item.
 - Resume after an interrupted reconciliation checks each destination separately. Do not reapply already recorded IDs.
 - Keep summary arrays such as `reviews_completed` unique. Recomputing `current-plan.json` from synthesized state is allowed; it must not itself add evidence or erase an active checkpoint locator.
 
 Prefer validated temporary-file replacement for each destination when supported. IDs plus same-file markers specify idempotent processing semantics; they do **not** provide database transactions, atomic multi-file commits, concurrency control, browser refresh handling, or guaranteed delivery of feedback. If a host cannot safely save changes and markers together, inspect/reconcile an ambiguous write before continuing instead of asserting exactly-once behavior. Those runtime guarantees belong to the future host application.
+
+## Correcting derived learning state
+
+The session's [assessment chain](assessment.md#append-only-assessment-chain) is authoritative. An objection alone changes nothing; a saved review changes which judgment is effective. `applied_assessment_ids` still tracks work per destination; no second correction ledger is needed.
+
+1. **Save the evidence first.** Append the review with the same original attempt reference and save the validated session, including any new exposure on an active checkpoint for that item. Do not rewrite the original answer, flags, prompt, or judgment. If this save fails, keep the decision in conversation and report that persistent correction has not happened.
+2. **Gather the affected evidence.** Load all relevant sessions for the target topic/capability, shared error patterns, and review ID, including later independent tasks. Resolve each attempt to its current tip. Exclude `void` and superseded judgments from teaching evidence but keep them in history. Use existing IDs for retained graph nodes, errors, patterns, and reviews. Do not allocate new IDs on recovery.
+3. **Resynthesize affected values, not inverse deltas.** Rebuild the relevant capability/stability, error occurrences, and scheduling decisions from the surviving evidence and the corrected interpretation. Do not decrement a counter blindly or restore an old whole-file snapshot. Preserve unrelated nodes, capability dimensions, errors, reviews, goals, and user choices. No evidence is not failure: withdraw an unsupported claim without erasing other demonstrated capability.
+4. **Save each destination with markers.** In each of graph, errors, and queue, skip a chain whose tip ID is already applied. Otherwise save the affected replacements/removals and all chain IDs together, even for an upheld or no-effect review. Preserve all existing markers. When a rebuild also incorporates other pending chains, save all of those consumed chain IDs in the same write; never later apply them again as increments. If interrupted between files, finish only pending destinations. An original judgment never applied before correction must not briefly create its mistaken error or schedule.
+5. **Refresh summaries and plan.** After reconciliation, recompute affected `errors_created`/`reviews_completed` summaries as unique references, without changing evidence. Regenerate stale `next_lesson`, frontier, and blockers from the corrected graph/errors/queue and current goal, retaining `resume_session_id` and any unrelated active exercise. Repeat this refresh on recovery even if all three destinations are already marked: interruption may have occurred before replanning. This refresh adds no evidence. Finish it before using the plan to teach.
+6. **Report actual scope.** Explain upheld/corrected/withdrawn, the reason, and which learning records changed. If a destination failed to save, name it as pending and avoid teaching from that stale state. In conversation-only use, say the correction applies here; do not claim saved files or cross-session repair.
+
+Destination-specific rules:
+
+- **Graph:** update only the target capability and any stability conclusion supported by its evidence. Retain other capabilities and independent evidence, even if they share a node. A corrected success is still subject to its original assistance and attempt number; it cannot become two successes.
+- **Errors:** replace or remove only instances sourced from the reviewed attempt. Keep valid instances from other items. Recompute a shared pattern's occurrences from distinct surviving item IDs, not assessment/review counts; remove an unsupported pattern from active teaching state instead of pretending the learner repaired it. Preserve a still-supported pattern and its repair strategy. A corrected diagnosis may move the instance to another pattern without adding an occurrence.
+- **Review queue:** when presenting a scheduled occurrence, preserve its full queue entry in the item's `review_state_before`. Recompute an affected review from the earliest affected occurrence's saved pre-state, processing subsequent occurrences chronologically using each first attempt's effective assessment and original assessment time. Later saved pre-states are historical snapshots, not baselines to restore over a corrected earlier event. Upheld judgments, revisions, and retries never add an interval step; void occurrences add none. Preserve later valid retrieval and manual scheduling choices. A generated task supported only by withdrawn evidence may be removed; keep a task still justified by another error, valid retrieval, or the learner's request. Do not reactivate already completed work merely by restoring its old snapshot. Keep an overdue corrected date due, rather than dating retrieval to the objection. When history or a user scheduling change cannot be resolved, explain the uncertainty and agree on a fresh review date rather than inventing exact prior scheduling.
+- **Plan:** remove remedial work whose only cause was the mistaken verdict; keep it if other valid evidence still supports it. Do not cancel or replace an unrelated saved question to make the plan appear current.
 
 ## 6. current-plan.json — active roadmap and frontier
 

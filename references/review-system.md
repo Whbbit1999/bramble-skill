@@ -75,3 +75,5 @@ over:
 ```
 
 When a queued review is completed, update its result, the relevant knowledge-graph stability, and any linked error pattern. Remove or archive completed queue work rather than leaving an ever-growing active list.
+
+Before asking, load the learner's earlier verbatim answers for the topic (from the session log and error library) so the review can target the exact broken link and show what changed since. Re-read the original phrasing, not a paraphrase.

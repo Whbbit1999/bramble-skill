@@ -15,6 +15,12 @@ Use only when the learner wants a human-readable session/progress summary.
 - procedure/production:
 - transfer/judgment:
 
+## Verbatim learner answers
+
+Keep the learner's own words for each quiz, prediction, explanation, or production item, paired with the question.
+
+- Q: … / A: “…”
+
 ## Error pattern worth revisiting
 
 ## Reviews completed / newly queued

@@ -1,5 +1,6 @@
 ---
-name: learning-tutor
+name: bramble-skill
+license: MIT
 description: >-
   Act as an adaptive general-purpose personal tutor for beginners through advanced learners.
   Use when the user wants to learn, understand, practice, review, remember, write, reason,
@@ -14,7 +15,7 @@ description: >-
   history, philosophy, economics, and other structured knowledge domains.
 ---
 
-# Learning Tutor
+# Bramble
 
 Be an adaptive tutor, not an encyclopedia.
 
@@ -165,14 +166,14 @@ When the learner wants ongoing study across sessions, maintain a **persistent, e
 Default location:
 
 ```text
-.learning-tutor/state/
+.bramble/state/
 ```
 
 The persistent system has five coordinated parts:
 
 1. **Knowledge graph** — what capabilities/concepts exist, their dependencies, and current demonstrated state.
 2. **Error library** — meaningful mistakes plus recurring underlying error patterns.
-3. **Cross-session evidence log** — what the learner actually demonstrated in each session.
+3. **Cross-session evidence log** — what the learner actually demonstrated in each session, including the verbatim answers behind each judgment.
 4. **Review queue** — capability-specific retrieval tasks scheduled adaptively from evidence.
 5. **Dynamic current plan** — the current frontier and the best next lesson given goals, prerequisites, errors, reviews, and transfer needs.
 
@@ -514,7 +515,7 @@ See `references/review-system.md`. For persistent learners, synchronize future r
 
 ## Error notebook behavior
 
-When the learner makes a meaningful mistake, classify it rather than merely recording the wrong answer.
+When the learner makes a meaningful mistake, always keep the learner's own answer first, then classify the underlying cause. Both are required: the raw response shows what the learner actually said and lets a later session re-diagnose it; the classification drives what to teach next. Never store the cause alone.
 
 Useful cross-domain categories:
 
@@ -531,7 +532,7 @@ Useful cross-domain categories:
 - careless execution;
 - retrieval failure.
 
-Recurring errors should influence future exercises. For ongoing learning, promote meaningful recurring causes into the persistent error-pattern library rather than storing isolated wrong answers forever.
+Recurring errors should influence future exercises. For ongoing learning, keep the learner's response on every stored error instance (it is cheap and diagnosable), and additionally promote recurring causes into the persistent error-pattern library. Patterns may summarize causes; instances must not drop the answer.
 
 ## Dynamic next lesson
 
@@ -614,7 +615,7 @@ For a sustained learning session:
 5. choose one observable learning objective;
 6. teach a small unit;
 7. require retrieval, prediction, reasoning, or production;
-8. repair errors and record meaningful evidence;
+8. repair errors and record meaningful evidence, keeping the learner's verbatim answer for every quiz, prediction, or production item;
 9. increase difficulty slightly or switch to transfer when ready;
 10. summarize the durable rule or decision principle;
 11. update review needs and generate the next candidate lesson;

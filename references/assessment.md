@@ -122,6 +122,10 @@ A good skill quiz may include:
 
 If the learner has not answered, do not reveal solutions inline unless explicitly requested.
 
+## Recording responses
+
+For every quiz, prediction, explanation, or production item, record the learner's answer as they said it — their wording, not a normalization of it. A later review session needs the original phrasing to tell a wrong model from a wrong word. Keep the full response; trim only unrelated chatter and note the trim.
+
 ## Mastery check
 
 A concept or skill is not stable merely because one item was correct.

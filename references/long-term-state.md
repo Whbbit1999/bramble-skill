@@ -11,12 +11,12 @@ At the start of an ongoing-learning workflow, determine whether the runtime has 
 Preferred state location:
 
 ```text
-.learning-tutor/state/
+.bramble/state/
 ```
 
 If the user specifies another location, use it instead.
 
-When the working directory is version-controlled, do not silently commit learning history. Add `.learning-tutor/` to the workspace ignore file, or place state in a user-scoped path outside the repository, before writing the first state file.
+When the working directory is version-controlled, do not silently commit learning history. Add `.bramble/` to the workspace ignore file, or place state in a user-scoped path outside the repository, before writing the first state file.
 
 If persistent storage is unavailable, do not pretend that cross-session state will survive. Keep state in the current conversation and, when useful, produce a compact state snapshot the learner can save and restore later.
 
@@ -24,7 +24,7 @@ If persistent storage is unavailable, do not pretend that cross-session state wi
 
 Create state only for an ongoing-learning workflow or when the learner asks for progress tracking. Do not create persistent files for every one-off explanation.
 
-If `.learning-tutor/state/` does not exist and persistence is appropriate:
+If `.bramble/state/` does not exist and persistence is appropriate:
 
 1. create the directory and `sessions/`;
 2. copy or instantiate the JSON skeletons from `templates/`;
@@ -37,7 +37,7 @@ When a future skill version changes a schema, preserve existing evidence and mig
 ## State layout
 
 ```text
-.learning-tutor/state/
+.bramble/state/
 ├── learner.json
 ├── knowledge-graph.json
 ├── error-library.json
@@ -149,7 +149,7 @@ Separate **instances** from **patterns**.
 
 ### Error instance
 
-An instance captures one diagnostic event:
+An instance captures one diagnostic event. Keep the learner's own words first, then the diagnosis:
 
 ```json
 {
@@ -158,6 +158,7 @@ An instance captures one diagnostic event:
   "category": "incorrect_conceptual_model",
   "summary": "Assumed this is determined by where the function was defined",
   "task_summary": "Predict the receiver of a detached method call",
+  "learner_answer": "It's still obj, because the function was defined inside obj",
   "learner_response_summary": "Expected the original object to remain this",
   "corrective_principle": "For ordinary functions, infer this from the call form",
   "retest_prompt": "Predict a different detached method example and explain the call site",
@@ -278,6 +279,7 @@ Recommended fields:
       "capability": "understanding",
       "result": "success",
       "kind": "prediction",
+      "learner_answer": "user.sayName() calls sayName with user as this; but fn() just calls the function, so this is undefined",
       "note": "Correctly predicted method vs detached call"
     }
   ],
@@ -288,6 +290,8 @@ Recommended fields:
 ```
 
 The session log is an audit trail. The knowledge graph is the current synthesized state.
+
+Every quiz, prediction, explanation, or production item keeps the learner's **verbatim answer** in `learner_answer`, alongside the `result` and diagnostic `note`. This is what a later review session reads to see what was actually said — not a paraphrase of it. Keep the full response even when it is long; trim only unrelated chatter and note the trim.
 
 ## 6. current-plan.json — active roadmap and frontier
 
@@ -384,6 +388,7 @@ If the learner asks to delete or reset learning state, remove or reset the relev
 - Prefer atomic state-file updates when the host supports them: write a temporary file, validate JSON, then replace the old file.
 - Evidence log is append-oriented; avoid rewriting history.
 - Knowledge graph is synthesized current state and may be updated.
+- Error instances always keep the learner's actual response (`learner_answer`, verbatim or near-verbatim); never store only the diagnosis. If the response was long, keep the relevant excerpt in the instance and the full answer in the session log.
 - Error patterns summarize repeated causes, not every wrong answer.
 - Review queue contains active future retrieval work, not completed history.
 - Current plan is provisional and can change after any strong new evidence.

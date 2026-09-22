@@ -1,4 +1,4 @@
-# Learning Tutor Skill（学习辅导技能）
+# Bramble（学习辅导技能）
 
 [English](./README.md)
 
@@ -60,7 +60,7 @@ conceptual subjects / humanities / social sciences      概念类学科 / 人文
 ## 目录结构
 
 ```text
-learning-tutor/
+bramble-skill/
 ├── SKILL.md
 ├── README.md
 ├── README.zh-CN.md
@@ -124,7 +124,7 @@ English prompts: see [README.md](./README.md).
 对于持续学习的学习者，当宿主运行时提供可持久写入的存储时，本技能可以维护一个本地状态目录：
 
 ```text
-.learning-tutor/state/
+.bramble/state/
 ├── learner.json
 ├── knowledge-graph.json
 ├── error-library.json

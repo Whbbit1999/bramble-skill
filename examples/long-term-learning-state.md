@@ -19,6 +19,19 @@ fn()
 
 ### Resulting evidence
 
+Record the answers as they were given, not just the verdict:
+
+```json
+{
+  "topic_id": "js-this-call-site",
+  "capability": "transfer",
+  "kind": "prediction",
+  "result": "failure",
+  "learner_answer": "fn() should still be user — the function was made inside user",
+  "note": "Infers this from definition site, not call site"
+}
+```
+
 ```text
 ordinary-function this / understanding: understood
 ordinary-function this / transfer: recognized

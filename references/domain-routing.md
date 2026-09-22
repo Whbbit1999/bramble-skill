@@ -155,7 +155,7 @@ The tutor should change activity accordingly instead of staying locked in explan
 
 If no adapter fits perfectly:
 
-- use the general Learning Tutor rules;
+- use the general Bramble rules;
 - identify the target capability;
 - borrow only the domain rules that genuinely help;
 - avoid forcing terminology or exercise types from an unrelated domain.

@@ -1,4 +1,4 @@
-# Learning Tutor Skill
+# Bramble
 
 [中文](./README.zh-CN.md)
 
@@ -60,7 +60,7 @@ This avoids treating every subject as if it were programming or every learning p
 ## Directory
 
 ```text
-learning-tutor/
+bramble-skill/
 ├── SKILL.md
 ├── README.md
 ├── README.zh-CN.md
@@ -126,7 +126,7 @@ A good session does not merely make the learner feel that the explanation was cl
 For an ongoing learner, the skill can maintain a local state directory when the host runtime provides persistent writable storage:
 
 ```text
-.learning-tutor/state/
+.bramble/state/
 ├── learner.json
 ├── knowledge-graph.json
 ├── error-library.json

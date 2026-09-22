@@ -1,94 +1,143 @@
 # Assessment, Exercises, and Feedback
 
-Assessment exists to reveal the learner's model, not to manufacture difficulty.
+Assessment exists to reveal the learner's model and capability, not to manufacture difficulty.
 
-## Exercise ladder
+## General exercise ladder
 
 ### 1. Recognition
-Identify the concept or relevant rule.
+Identify the relevant idea, feature, pattern, or tool.
 
-### 2. Prediction
-Predict behavior before execution.
+### 2. Prediction / inference
+Predict what will happen, what follows, or which change matters.
 
 ### 3. Completion
-Fill in one missing piece.
+Fill in one missing step, line, sentence, derivation, or component.
 
 ### 4. Explanation
-Explain why the result occurs.
+Explain why the result, claim, or choice makes sense.
 
-### 5. Debugging
-Find the broken assumption and repair it.
+### 5. Diagnosis / critique
+Find the broken assumption, weak evidence, unclear structure, or inappropriate method.
 
-### 6. Construction
-Build a minimal solution from scratch.
+### 6. Construction / production
+Create a minimal solution, proof, paragraph, program, explanation, or response.
 
 ### 7. Transfer
-Apply the concept in a changed context.
+Use the capability in a changed context where the relevant method is not explicitly named.
 
 ### 8. Integration
-Combine multiple concepts in a realistic task.
+Combine multiple capabilities in an authentic task.
+
+## Domain-specific evidence
+
+Choose assessment forms that match what “knowing” means in the domain.
+
+### Programming
+Prediction, debugging, construction, design choice, transfer.
+
+### Mathematics
+Calculation, representation change, derivation, proof/explanation, unfamiliar problem.
+
+### Writing
+Revision, comparison, outlining, drafting, justification of choices, critique.
+
+### Language learning
+Comprehension, retrieval, controlled production, free production, repair after feedback.
+
+### Natural sciences
+Prediction, model explanation, units, graph/data interpretation, assumption/evidence reasoning.
+
+### Conceptual subjects
+Recall, chronology/structure, causal explanation, argument mapping, evidence comparison, counterexample.
 
 ## One-variable principle
 
-When testing a newly learned rule, change one important variable at a time.
+When testing a newly learned relationship, change one important variable at a time when possible.
 
 This makes errors diagnostically useful.
+
+For open-ended tasks, hold the goal and audience constant while changing one feature such as organization, evidence, or wording.
+
+## Worked examples and fading
+
+For procedural skills:
+
+```text
+fully worked example
+→ example with one missing step
+→ partial scaffolding
+→ independent problem
+→ variation
+```
+
+Do not leave scaffolding in place forever.
 
 ## Good distractors
 
 If multiple choice is appropriate, wrong options should correspond to plausible misconceptions, not random nonsense.
 
-After answering, explain what misconception each relevant wrong option represents.
+After answering, explain the misconception represented by relevant distractors.
 
 ## Hints
 
 Use progressive hints:
 
-1. point to the relevant line or concept;
-2. restate the governing rule;
-3. narrow to two possibilities;
-4. show one intermediate step;
+1. point to the relevant feature, line, sentence, datum, or relationship;
+2. restate the governing principle;
+3. narrow the search space;
+4. show one intermediate step or example;
 5. reveal the answer with explanation.
 
-Do not jump straight to the full solution unless the learner asks.
+Do not jump straight to the full solution unless requested.
 
 ## Feedback format
 
 Useful feedback answers:
 
-- What part of the reasoning was correct?
-- What exact assumption failed?
-- Why did that assumption feel plausible?
-- What rule repairs it?
+- What part of the reasoning or artifact was effective?
+- What exact assumption, step, or choice failed?
+- Why did it feel plausible?
+- What principle repairs it?
 - Can the learner now handle a nearby case?
+
+For creative/open work, distinguish objective constraints from stylistic preferences.
 
 ## Quiz construction
 
-For a short quiz, mix:
+For a short quiz, mix forms rather than asking the same type repeatedly.
+
+A good conceptual quiz may include:
 
 - direct retrieval;
-- prediction;
-- debugging;
-- one transfer problem.
+- prediction/inference;
+- explanation;
+- one transfer item.
 
-Do not make every question the same shape.
+A good skill quiz may include:
 
-If the learner has not yet answered, do not reveal solutions inline unless explicitly requested.
+- one guided performance;
+- one independent performance;
+- one critique/diagnosis;
+- one novel variation.
+
+If the learner has not answered, do not reveal solutions inline unless explicitly requested.
 
 ## Mastery check
 
-A concept is not stable merely because one exercise was correct.
+A concept or skill is not stable merely because one item was correct.
 
-Prefer at least two forms of evidence, for example:
+Prefer at least two different forms of evidence, for example:
 
 ```text
 correct prediction + correct explanation
 ```
 
-or:
+```text
+independent procedure + successful transfer
+```
 
 ```text
-independent construction + successful transfer
+strong draft + accurate self-critique/revision
 ```
 
 ## Error classification
@@ -96,11 +145,15 @@ independent construction + successful transfer
 Classify meaningful errors as one of:
 
 - missing prerequisite;
-- wrong causal model;
+- wrong causal/conceptual model;
 - overgeneralization;
-- terminology confusion;
-- environment/runtime confusion;
-- syntax/execution slip;
+- terminology/notation confusion;
+- procedure-selection error;
+- execution slip;
+- evidence-selection error;
+- organization/structure error;
+- judgment/calibration error;
+- context/environment confusion;
 - retrieval failure;
 - edge-case gap.
 

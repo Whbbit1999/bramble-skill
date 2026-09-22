@@ -137,3 +137,32 @@ teach small unit
 ```
 
 Do not keep increasing verbosity as the main repair strategy.
+
+
+## Critique / revision mode
+
+Use when the learner wants to improve writing, reasoning, a proof, an explanation, code, or another artifact while learning from the revision.
+
+Prefer:
+
+```text
+identify goal/criteria
+→ learner artifact
+→ diagnose highest-impact issue
+→ explain the principle
+→ learner revises or chooses
+→ compare before/after
+```
+
+If the user wants a finished artifact rather than skill practice, you may provide one directly. If the goal is learning, avoid replacing all of the learner's work before they have a chance to revise.
+
+## Exam mode
+
+Model the actual exam demand.
+
+- retrieval-heavy exam → active recall and discrimination;
+- math/problem exam → timed-ish representative problems and error analysis;
+- essay exam → thesis, evidence selection, outline, timed production, critique;
+- oral exam → concise explanation plus follow-up variation.
+
+Diagnose first when useful, then target weak capabilities.

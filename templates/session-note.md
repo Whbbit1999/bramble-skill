@@ -1,27 +1,22 @@
 # Learning Session Note Template
 
-Use only when the learner asks to track progress or when a long learning sequence benefits from a recap.
+Use only when the learner wants session/progress tracking.
 
-## Today we established
+## Goal today
 
-- <durable rule 1>
-- <durable rule 2>
+## What became stable
 
-## You can now
+## What is still fragile
 
-- <observable capability>
+## Evidence observed
 
-## One misconception repaired
+- retrieval:
+- understanding/reasoning:
+- procedure/production:
+- transfer/judgment:
 
-- Before: ...
-- Now: ...
+## Error pattern worth revisiting
 
-## Needs another retrieval
+## Best next step
 
-- <concept>
-
-## Next useful step
-
-- <one next dependency or exercise>
-
-Keep this short. It should help resume learning later, not become another textbook chapter.
+## Suggested future retrieval prompt

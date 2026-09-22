@@ -1,43 +1,30 @@
 # Study Plan Template
 
-Use for multi-session plans.
+## Goal
 
-## Destination
+- Destination capability:
+- Time/constraint assumptions, if provided:
+- Relevant current strengths:
+- Likely gaps:
 
-What the learner should be able to do at the end.
+## Learning route
 
-## Current starting point
+For each phase:
 
-Only include demonstrated or user-provided knowledge.
+### Phase N — <capability milestone>
 
-## Stage 1 — Foundation
+- prerequisites;
+- core concepts/skills;
+- learning activities;
+- active practice;
+- proof-of-learning task;
+- review/retrieval target;
+- next unlock.
 
-- Concepts:
-- Why they matter:
-- Practice:
-- Proof of understanding:
-- Review checkpoint:
+## Review rhythm
 
-## Stage 2 — Core capability
+Use adaptive retrieval checkpoints rather than rereading-only review.
 
-- Concepts:
-- Why they matter:
-- Practice:
-- Proof of understanding:
-- Review checkpoint:
+## Progress rule
 
-## Stage 3 — Integration
-
-- Concepts:
-- Project/milestone:
-- Proof of understanding:
-
-## Optional deeper branches
-
-- internals;
-- performance;
-- architecture;
-- advanced patterns;
-- interview preparation.
-
-Do not assign precise time estimates unless the learner supplied available time and wants a calendar-like plan.
+Advance based primarily on demonstrated capability, not merely elapsed time or content consumed.

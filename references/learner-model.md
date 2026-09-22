@@ -7,62 +7,83 @@ Use a lightweight evidence-based model of the learner. Do not over-profile.
 Infer only teaching-relevant information:
 
 - current learning goal;
-- prerequisite knowledge demonstrated in this conversation;
-- concepts that are stable vs fragile;
-- misconceptions revealed by predictions or code;
-- preferred successful representations when obvious;
-- current ability to transfer knowledge.
+- prerequisite knowledge or skills demonstrated in this conversation;
+- concepts/skills that are stable vs fragile;
+- misconceptions or error patterns;
+- successful representations when obvious;
+- current ability to retrieve and transfer knowledge;
+- current ability to produce and judge work when those matter.
+
+## Capability dimensions
+
+Do not assume one mastery axis fits every domain. Track only relevant dimensions:
+
+- **knowledge** — facts, terms, definitions, notation;
+- **understanding** — relationships, mechanisms, reasons;
+- **procedure** — reliable execution of a method;
+- **reasoning** — derivation, proof, inference, diagnosis;
+- **production** — creation of an artifact or response;
+- **judgment** — selecting and justifying among alternatives;
+- **transfer** — applying learning in a novel context.
+
+Example:
+
+```text
+argumentative writing
+- structure knowledge: understood
+- paragraph production: applicable
+- evidence selection: fragile
+- revision judgment: unseen
+```
 
 ## Evidence hierarchy
 
 Strong evidence:
 
-1. learner solves a novel problem correctly;
-2. learner explains causal reasoning correctly;
-3. learner predicts a variation correctly;
-4. learner distinguishes nearby concepts correctly.
+1. learner succeeds on a novel transfer task;
+2. learner produces a solution/artifact and justifies key decisions;
+3. learner explains causal or logical reasoning correctly;
+4. learner predicts a controlled variation correctly;
+5. learner performs a procedure without step-by-step prompts.
 
 Weaker evidence:
 
-5. learner recognizes terminology;
-6. learner says “懂了”; 
-7. learner has seen the topic before.
+6. learner recognizes terminology or a familiar pattern;
+7. learner follows a worked example;
+8. learner says “懂了”.
 
 Do not treat weak evidence as mastery.
 
-## Diagnostic strategy
+## Diagnose through authentic micro-tasks
 
-Diagnose through the task whenever possible.
+Prefer a tiny representative task over self-rating questions.
 
-Instead of asking:
+Programming: predict a five-line example.
 
-> “你会不会作用域？”
+Mathematics: solve one small problem and explain one step.
 
-Use:
+Writing: compare two sentences or revise one weak paragraph.
 
-```js
-let x = 1
-function f() {
-  let x = 2
-  console.log(x)
-}
-f()
-```
+Language: produce one sentence from meaning rather than repeat a model.
 
-Ask what prints and why.
+History/conceptual subjects: explain a causal link or place two events/claims in relation.
 
-One small task can reveal more than several self-rating questions.
+Science: predict what changes when one variable or assumption changes.
 
 ## Dependency gaps
 
-When a learner struggles, classify the gap:
+When the learner struggles, classify the smallest gap:
 
-- vocabulary gap;
+- vocabulary/notation gap;
 - missing prerequisite;
-- causal-model gap;
+- causal/conceptual-model gap;
+- procedure-selection gap;
+- execution gap;
+- evidence gap;
+- organization/structure gap;
+- judgment/calibration gap;
 - transfer gap;
-- execution/syntax gap;
-- environment gap.
+- context/environment gap.
 
 Teach the gap, not the whole subject again.
 
@@ -74,34 +95,24 @@ Use internally when helpful:
 No usable evidence.
 
 ### Recognized
-Can identify the term or familiar example.
+Can identify the term, form, or familiar example.
 
 ### Understood
-Can explain the central causal model.
+Can explain the central relationship or reason.
 
 ### Applicable
-Can solve a nearby problem independently.
+Can perform a nearby task independently.
 
 ### Transferable
-Can adapt the idea, compare alternatives, and reason about boundaries.
+Can adapt the idea, select it appropriately, compare alternatives, and reason about boundaries.
 
-A learner can be at different states for different sub-concepts.
+For productive domains, store production and judgment separately when useful.
 
 ## Updating the model
 
-After each meaningful learner response, update only the affected concept.
+After each meaningful response, update only the affected capability.
 
-Example:
-
-```text
-closures
-- purpose: understood
-- lexical scope dependency: applicable
-- lifetime intuition: fragile
-- callback application: unseen
-```
-
-Do not present this internal representation unless the learner asks for progress tracking.
+Do not present an internal mastery table unless the learner asks for progress tracking.
 
 ## Avoid
 
@@ -109,4 +120,5 @@ Do not present this internal representation unless the learner asks for progress
 - assuming correct terminology equals understanding;
 - treating one mistake as global incompetence;
 - lowering difficulty permanently because of one error;
-- making the learner repeat material they have already demonstrated.
+- making the learner repeat material they already demonstrated;
+- treating fluent production as proof of good judgment, or vice versa.

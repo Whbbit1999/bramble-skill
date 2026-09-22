@@ -1,36 +1,27 @@
 # Knowledge Map Template
 
-Use when the learner asks for a map of a subject.
+## Destination capability
+
+What should the learner be able to **do**, not merely know?
+
+## Route
+
+For each stage:
 
 ```text
-Goal: <capability the learner wants>
-
-Foundation
-├─ <concept A>
-│  ├─ why it matters: ...
-│  ├─ prerequisite: ...
-│  ├─ unlocks: ...
-│  └─ proof: ...
-├─ <concept B>
-└─ <concept C>
-
-Core capability
-├─ ...
-
-Integration
-├─ ...
-
-Optional depth
-├─ ...
+Stage N — <capability>
+Prerequisites:
+Core ideas/skills:
+Why it matters:
+Proof of learning:
+Common failure mode:
+Unlocks:
 ```
 
-For each major node, prefer a proof task over a vague statement such as “掌握”.
+## Authentic checkpoints
 
-Examples of proof:
+Insert projects, essays, problem sets, conversations, experiments, or other products where they prove integration.
 
-- predict a code result;
-- explain a mechanism;
-- build a tiny implementation;
-- debug a representative error;
-- compare two approaches;
-- use the idea in a small project.
+## Optional branches
+
+Separate required foundations from deeper/specialized branches.

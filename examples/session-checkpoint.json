@@ -76,7 +76,7 @@
     "hint_used": true,
     "answer_seen": true
   },
-  "errors_created": [],
-  "reviews_completed": [],
+  "errors_created": ["err-20260922-001"],
+  "reviews_completed": ["rev-js-this-001"],
   "next_candidates": []
 }

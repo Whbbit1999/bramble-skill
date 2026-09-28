@@ -32,7 +32,7 @@ Suppose `e2` is later independent evidence on the same capability: for x² = 9, 
 
 | State | Corrected effect |
 | --- | --- |
-| Error instances | Remove only the instance from `a1`; retain the instance from `a2` |
+| Error instances | Remove only the instance from `a1`; retain the second item's failure instance |
 | Shared error pattern | If both previously supported it, recompute from surviving distinct items: 2 → 1; do not delete the whole pattern |
 | Capability/stability | Reconsider the affected dimension with both effective judgments; do not declare mastery from this correction alone |
 | Review queue | Reconstruct `q1`'s occurrence from its saved pre-state and original retrieval date, then retain later valid review occurrences; no interval step on the objection date |

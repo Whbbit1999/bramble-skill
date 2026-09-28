@@ -106,7 +106,7 @@ The same session progresses through these save boundaries:
 1. **Question saved, no answer.** Save the item with empty `attempts` and `assessments` arrays and a checkpoint with `attempt_id: null` and both exposure flags false. On “继续”, show its exact strict-mode code and response requirements. Do not show either assessment or solution.
 2. **Answer saved, no assessment.** Append the first attempt and point the checkpoint at it. If interrupted, evaluate “Both return user because who was defined inside user.” from that record; do not ask again or add another answer.
 3. **Assessment saved.** Append the first failure assessment and set checkpoint `hint_used: true` before giving its hint feedback. Resume with the saved feedback/result. Open a retry by clearing only checkpoint `attempt_id`, then append attempt 2 when the learner submits. Do not change attempt 1.
-4. **Retry assessed.** The populated JSON shows this position. Retain both results, restore saved feedback, and choose a fresh unassisted variation for evidence of independent learning.
+4. **Retry assessed.** The populated JSON shows this position after reconciling derived state and refreshing its summaries: `errors_created` references the first failure's error instance, and `reviews_completed` references the completed occurrence even though retrieval failed and the queue retains future review work. Retain both results, restore saved feedback, and choose a fresh unassisted variation for evidence of independent learning.
 
 For example, after reconciling both assessments, the graph may contain:
 
